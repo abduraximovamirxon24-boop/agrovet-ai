@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chorva AI Tashxis (Test)</title>
+  <style>
+    body{font-family:system-ui,Arial;margin:0;background:#0b1220;color:#e8eefc}
+    .wrap{max-width:900px;margin:24px auto;padding:16px}
+    .card{background:#121a2b;border:1px solid #223052;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    h1{font-size:20px;margin:0 0 10px}
+    label{display:block;margin:12px 0 6px;color:#b9c6e6;font-size:13px}
+    input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #223052;background:#0e1626;color:#e8eefc}
+    textarea{min-height:90px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{padding:12px 14px;border-radius:12px;border:1px solid #2a3b66;background:#1b2a4d;color:#e8eefc;cursor:pointer}
+    button:hover{filter:brightness(1.1)}
+    .out{margin-top:14px;padding:14px;border-radius:14px;border:1px dashed #2a3b66;background:#0e1626}
+    .tag{display:inline-block;padding:6px 10px;border:1px solid #2a3b66;border-radius:999px;margin:4px 6px 0 0;font-size:12px;color:#b9c6e6}
+    .warn{color:#ffd27a}
+    .ok{color:#96ffb0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>🐄 Chorva AI Tashxis — Test rejim</h1>
+      <div class="row">
+        <div>
+          <label>Hayvon turi</label>
+          <select id="type">
+            <option value="sigir">Sigir</option>
+            <option value="qoy">Qo‘y</option>
+            <option value="echki">Echki</option>
+            <option value="buzoq">Buzoq</option>
+          </select>
+        </div>
+        <div>
+          <label>Yoshi (oy)</label>
+          <input id="age" type="number" min="0" placeholder="masalan: 18" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Harorat (°C)</label>
+          <input id="temp" type="number" step="0.1" placeholder="masalan: 39.5" />
+        </div>
+        <div>
+          <label>Ishtaha</label>
+          <select id="appetite">
+            <option value="yaxshi">Yaxshi</option>
+            <option value="pasaygan">Pasaygan</option>
+            <option value="yoq">Yo‘q</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Alomatlar (vergul bilan)</label>
+      <input id="symptoms" placeholder="masalan: yo‘tal, ich ketish, ko‘z yoshlanishi" />
+
+      <label>Qo‘shimcha izoh</label>
+      <textarea id="note" placeholder="Qachondan beri? Nima yedi? Em qilinganmi?"></textarea>
+
+      <div class="btns">
+        <button onclick="diagnose()">Tashxis (test)</button>
+        <button onclick="resetForm()">Tozalash</button>
+      </div>
+
+      <div id="output" class="out">
+        <div class="tag">Natija shu yerda chiqadi…</div>
+      </div>
+      <p style="margin:10px 0 0;color:#9fb0da;font-size:12px">
+        ⚠️ Bu demo. Haqiqiy tashxis uchun veterinarga murojaat qiling.
+      </p>
+    </div>
+  </div>
+
+<script>
+function score(symList, word){
+  return symList.includes(word) ? 1 : 0;
+}
+
+function diagnose(){
+  const type = document.getElementById('type').value;
+  const age = Number(document.getElementById('age').value || 0);
+  const temp = Number(document.getElementById('temp').value || 0);
+  const appetite = document.getElementById('appetite').value;
+  const symptomsRaw = (document.getElementById('symptoms').value || "").toLowerCase();
+  const note = (document.getElementById('note').value || "").toLowerCase();
+  const sym = symptomsRaw.split(',').map(s=>s.trim()).filter(Boolean);
+
+  let hints = [];
+  let actions = [];
+
+  // Oddiy qoidalar (demo)
+  const fever = temp >= 39.5;
+  const highFever = temp >= 40.5;
+
+  const cough = score(sym,'yo‘tal')||score(sym,"yotal")||score(sym,'yo\'tal');
+  const diarrhea = score(sym,'ich ketish')||score(sym,'diareya')||score(sym,'suyuqlash');
+  const bloat = score(sym,'qorin dam')||score(sym,'dam')||score(sym,'shish');
+  const eye = score(sym,'ko‘z yoshlanishi')||score(sym,'ko\'z yoshlanishi')||score(sym,'ko‘z yiring');
+  const lameness = score(sym,'oqsoqlik')||score(sym,'oyoqlari og‘riq')||score(sym,"oyoq ogriq");
+
+  // Taxminlar
+  if(bloat){
+    hints.push("Qorin dam bo‘lishi (timpanija/gaz) ehtimoli");
+    actions.push("Hayvonni darhol yuritish, ko‘p yem bermaslik, veterinar bilan tez bog‘lanish");
+  }
+  if(diarrhea && fever){
+    hints.push("Infeksiya yoki zaharlanish ehtimoli");
+    actions.push("Suv-elektrolit (regridratsiya), yemni yengillashtirish, veterinar ko‘rigi");
+  }
+  if(cough && fever){
+    hints.push("Nafas yo‘llari yallig‘lanishi (shamollash/pnevmoniya) ehtimoli");
+    actions.push("Iliq joy, shamoldan asrash, haroratni kuzatish, veterinar tavsiyasi bilan dori");
+  }
+  if(eye && !fever){
+    hints.push("Ko‘z yallig‘lanishi yoki chang/allergiya ehtimoli");
+    actions.push("Ko‘zni toza suv bilan ehtiyotkor yuvish, gigiyena, kuchaysa veterinar");
+  }
+  if(lameness){
+    hints.push("Oyoq-tuyoq muammosi ehtimoli");
+    actions.push("Tuyoqni tekshirish, yara bo‘lsa antiseptik, og‘irlashsa veterinar");
+  }
+  if(appetite === "yoq" && highFever){
+    hints.push("Og‘ir holat bo‘lishi mumkin (yuqori isitma + ishtaha yo‘q)");
+    actions.push("Shoshilinch veterinar chaqirish tavsiya etiladi");
+  }
+
+  if(hints.length === 0){
+    hints.push("Aniq alomat yetarli emas — qo‘shimcha ma’lumot kerak");
+    actions.push("Harorat, najas, yo‘tal, nafas, sut/ishlab chiqarish, suv ichishi haqida yozing");
+  }
+
+  const out = document.getElementById('output');
+  out.innerHTML = `
+    <div class="tag">Hayvon: <b>${type}</b></div>
+    <div class="tag">Yosh: <b>${age}</b> oy</div>
+    <div class="tag">Harorat: <b>${temp || "—"}</b> °C</div>
+    <div class="tag">Ishtaha: <b>${appetite}</b></div>
+    <hr style="border:0;border-top:1px solid #223052;margin:12px 0">
+    <div class="${highFever ? 'warn':'ok'}"><b>Taxminiy yo‘nalish:</b></div>
+    <ul>${hints.map(h=>`<li>${h}</li>`).join('')}</ul>
+    <div class="warn"><b>Amaliy tavsiya:</b></div>
+    <ul>${actions.map(a=>`<li>${a}</li>`).join('')}</ul>
+    <div style="margin-top:10px;color:#9fb0da;font-size:12px">
+      Eslatma: Bu test algoritm. Haqiqiy tashxis laborator/klinika tekshiruviga bog‘liq.
+    </div>
+  `;
+}
+
+function resetForm(){
+  ['age','temp','symptoms','note'].forEach(id=>document.getElementById(id).value="");
+  document.getElementById('appetite').value="yaxshi";
+  document.getElementById('type').value="sigir";
+  document.getElementById('output').innerHTML = `<div class="tag">Natija shu yerda chiqadi…</div>`;
+}
+</script>
+</body>
+</html>
