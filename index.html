@@ -3,28 +3,233 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chorva AI Tashxis (Test)</title>
+  <title>Chorva AI Tashxis (Beta)</title>
   <style>
     body{font-family:system-ui,Arial;margin:0;background:#0b1220;color:#e8eefc}
-    .wrap{max-width:900px;margin:24px auto;padding:16px}
-    .card{background:#121a2b;border:1px solid #223052;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-    h1{font-size:20px;margin:0 0 10px}
-    label{display:block;margin:12px 0 6px;color:#b9c6e6;font-size:13px}
-    input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #223052;background:#0e1626;color:#e8eefc}
-    textarea{min-height:90px;resize:vertical}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    button{padding:12px 14px;border-radius:12px;border:1px solid #2a3b66;background:#1b2a4d;color:#e8eefc;cursor:pointer}
-    button:hover{filter:brightness(1.1)}
-    .out{margin-top:14px;padding:14px;border-radius:14px;border:1px dashed #2a3b66;background:#0e1626}
-    .tag{display:inline-block;padding:6px 10px;border:1px solid #2a3b66;border-radius:999px;margin:4px 6px 0 0;font-size:12px;color:#b9c6e6}
-    .warn{color:#ffd27a}
-    .ok{color:#96ffb0}
+  :root{
+    --bg1:#0b1220;
+    --bg2:#0f172a;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.08);
+    --border: rgba(255,255,255,.12);
+    --text:#e8eefc;
+    --muted: rgba(232,238,252,.72);
+    --primary1:#38bdf8;
+    --primary2:#22d3ee;
+    --good:#34d399;
+    --warn:#fbbf24;
+    --danger:#fb7185;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    margin:0;
+    color:var(--text);
+    background:
+      radial-gradient(900px 500px at 15% 10%, rgba(56,189,248,.25), transparent 60%),
+      radial-gradient(900px 500px at 85% 20%, rgba(34,211,238,.18), transparent 60%),
+      radial-gradient(900px 700px at 50% 90%, rgba(251,113,133,.10), transparent 60%),
+      linear-gradient(180deg, var(--bg1), var(--bg2));
+  }
+
+  a{color:inherit}
+  .container{max-width:980px;margin:0 auto;padding:18px}
+  .glass{
+    background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    border:1px solid var(--border);
+    border-radius:22px;
+    box-shadow: 0 18px 60px rgba(0,0,0,.45);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* HERO */
+  .hero{padding:26px 18px 10px}
+  .heroInner{padding:22px}
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    font-weight:800;font-size:14px;letter-spacing:.3px;
+    opacity:.95
+  }
+  .title{
+    margin:10px 0 10px;
+    font-size:34px;line-height:1.12;
+    font-weight:900;
+    background: linear-gradient(90deg, var(--primary1), var(--primary2), #a78bfa);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .subtitle{margin:0;color:var(--muted);font-size:16px;max-width:720px}
+  .heroRow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 12px;border-radius:999px;
+    background: rgba(22,163,74,.14);
+    border:1px solid rgba(52,211,153,.25);
+    color: rgba(232,238,252,.92);
+    font-size:13px;font-weight:650
+  }
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px 16px;border-radius:14px;
+    border:1px solid rgba(56,189,248,.22);
+    background: linear-gradient(90deg, rgba(56,189,248,.92), rgba(34,211,238,.92));
+    color:#06121b;
+    font-weight:800;
+    text-decoration:none;
+    box-shadow: 0 10px 25px rgba(56,189,248,.25);
+    transition: transform .12s ease, filter .12s ease;
+  }
+  .btn:active{transform:scale(.98)}
+  .btnSecondary{
+    background: rgba(255,255,255,.06);
+    border:1px solid var(--border);
+    color:var(--text);
+    box-shadow:none;
+  }
+
+  /* FORM CARD */
+  .wrap{max-width:980px;margin:10px auto 22px;padding:0 18px}
+  .card{padding:18px}
+  .cardHead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+  .h1{
+    margin:0;
+    font-size:20px;
+    font-weight:900;
+    letter-spacing:.2px
+  }
+  .hint{color:var(--muted);font-size:13px;margin:0}
+  .divider{height:1px;background:rgba(255,255,255,.10);margin:14px 0}
+
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:720px){.row{grid-template-columns:1fr}}
+
+  label{
+    display:block;
+    font-size:12.5px;
+    color:rgba(232,238,252,.86);
+    margin:6px 0 6px;
+    font-weight:700;
+  }
+
+  input,select,textarea{
+    width:100%;
+    padding:12px 12px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.05);
+    color:var(--text);
+    outline:none;
+    font-size:14px;
+    transition: border .12s ease, transform .12s ease, background .12s ease;
+  }
+  input:focus,select:focus,textarea:focus{
+    border-color: rgba(56,189,248,.55);
+    background: rgba(255,255,255,.07);
+  }
+  textarea{min-height:110px;resize:vertical}
+
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  button{
+    padding:12px 14px;
+    border-radius:14px;
+    border:1px solid rgba(56,189,248,.22);
+    background: rgba(255,255,255,.06);
+    color:var(--text);
+    font-weight:800;
+    cursor:pointer;
+    transition: transform .12s ease, filter .12s ease;
+  }
+  button.primary{
+    background: linear-gradient(90deg, rgba(56,189,248,.92), rgba(34,211,238,.92));
+    color:#06121b;
+    border-color: rgba(56,189,248,.35);
+  }
+  button:active{transform:scale(.98)}
+
+  .out{
+    margin-top:14px;
+    padding:14px;
+    border-radius:18px;
+    border:1px dashed rgba(56,189,248,.32);
+    background: rgba(0,0,0,.10);
+  }
+  .tag{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.05);
+    margin:4px 6px 0 0;
+    font-size:12.5px;
+    color:rgba(232,238,252,.92);
+  }
+  .warn{color:rgba(251,191,36,.95);font-weight:800}
+  .ok{color:rgba(52,211,153,.95);font-weight:800}
+
+  /* CONTACT */
+  .contact{margin:16px auto 26px; padding:0 18px; max-width:980px}
+  .contactInner{padding:18px}
+  .contactTitle{margin:0 0 8px;font-size:16px;font-weight:900}
+  .contactGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:720px){.contactGrid{grid-template-columns:1fr}}
+  .contactBox{
+    padding:14px;border-radius:18px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.05);
+  }
+  .small{color:var(--muted);font-size:13px;margin:6px 0 0}
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <div class="card">
+<body> <div style="text-align:center; padding:70px 20px 50px 20px; background:linear-gradient(135deg,#0f172a,#1e293b);">
+
+  <h1 style="
+  font-size:36px;
+  margin-bottom:15px;
+  background:linear-gradient(90deg,#38bdf8,#22d3ee);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;">
+  AgroVet AI
+  </h1>
+
+  <p style="
+  font-size:18px;
+  opacity:0.85;
+  max-width:600px;
+  margin:auto;">
+  Sun’iy intellekt asosida chorva hayvonlari uchun tezkor va aqlli tashxis tizimi.
+  Fermerlar va veterinariya klinikalari uchun innovatsion yechim.
+  </p>
+
+  <div style="margin-top:25px;">
+    <span style="
+    background:#16a34a;
+    padding:8px 18px;
+    border-radius:25px;
+    font-size:14px;
+    font-weight:600;">
+    Beta versiya
+    </span>
+  </div>
+
+  <div style="margin-top:30px;">
+    <a href="#form" style="
+    display:inline-block;
+    padding:12px 25px;
+    border-radius:30px;
+    background:#22d3ee;
+    color:#0f172a;
+    text-decoration:none;
+    font-weight:600;">
+    Tashxisni boshlash
+    </a>
+  </div>
+
+</div>
+  <div class="wrap" id="form">
+    <div class="card glass">
       <h1>🐄 Chorva AI Tashxis — Test rejim</h1>
       <div class="row">
         <div>
@@ -72,7 +277,7 @@
         <div class="tag">Natija shu yerda chiqadi…</div>
       </div>
       <p style="margin:10px 0 0;color:#9fb0da;font-size:12px">
-        ⚠️ Bu demo. Haqiqiy tashxis uchun veterinarga murojaat qiling.
+        ⚠️ Bu Beta versiya. Haqiqiy tashxis uchun veterinarga murojaat qiling.
       </p>
     </div>
   </div>
@@ -158,6 +363,51 @@ function resetForm(){
   document.getElementById('type').value="sigir";
   document.getElementById('output').innerHTML = `<div class="tag">Natija shu yerda chiqadi…</div>`;
 }
-</script>
-</body>
+</script> 
+  <section class="contact">
+  <div class="contactInner glass">
+
+    <div class="contactTitle">📞 Biz bilan aloqa</div>
+
+    <div class="contactGrid">
+
+      <div class="contactBox">
+        <small>Loyiha</small>
+        <div><b>AgroVet AI</b></div>
+      </div>
+
+      <div class="contactBox">
+        <small>Asoschi</small>
+        <div><b>Abduraximov Amirxon</b></div>
+      </div>
+
+      <div class="contactBox">
+        <small>Telegram</small>
+        <div>
+          <a href="https://t.me/agrovet_ai" target="_blank">
+            @agrovet_ai
+          </a>
+        </div>
+      </div>
+
+      <div class="contactBox">
+        <small>Email</small>
+        <div>
+          <a href="mailto:amirxon2127@gmail.com">
+            amirxon2127@gmail.com
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <small>
+      Fermer xo‘jaliklari va veterinariya klinikalari bilan hamkorlikka ochiqmiz.
+    </small>
+
+  </div>
+</section>
+</body> 
+  
+
 </html>
