@@ -267,8 +267,14 @@
 
       <label>Qo‘shimcha izoh</label>
       <textarea id="note" placeholder="Qachondan beri? Nima yedi? Em qilinganmi?"></textarea>
+<div>
+  <label>Hayvon rasmi (majburiy emas)</label>
+  <input type="file" id="photo" accept="image/*" onchange="previewImage(event)">
+</div>
 
-      <div class="btns">
+<div id="imagePreview" style="margin-top:10px;"></div>
+
+<div class="btns">
         <button onclick="diagnose()">Tashxis (test)</button>
         <button onclick="resetForm()">Tozalash</button>
       </div>
@@ -286,7 +292,19 @@
 function score(symList, word){
   return symList.includes(word) ? 1 : 0;
 }
+function previewImage(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
 
+  const reader = new FileReader();
+  reader.onload = () => {
+    const preview = document.getElementById("imagePreview");
+    preview.innerHTML = `
+      <img src="${reader.result}" style="max-width:100%; border-radius:14px; margin-top:10px;" />
+    `;
+  };
+  reader.readAsDataURL(file);
+}
 function diagnose(){
 
   const type = document.getElementById('type').value;
@@ -439,4 +457,5 @@ function resetForm(){
   
 
 </html>
+
 
